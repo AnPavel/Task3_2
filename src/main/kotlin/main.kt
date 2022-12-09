@@ -15,7 +15,9 @@ interface Storage<T> {
 
 }
 
-class Case<T, E>(var item: T, var item2: E) : Storage<T> {
+open class IdItem(val id: Int)
+
+class Case<T: IdItem, E>(var item: T, var item2: E) : Storage<T> {
 
     private var numbersOne = mutableListOf<T>()
 
@@ -37,7 +39,6 @@ class Case<T, E>(var item: T, var item2: E) : Storage<T> {
         //}
         return listOfNotNull()
     }
-
     //fun <T> listof(vararg elements: T): List<T> {
     //    if ( elements.size > 0) elements.asList() else emptyList()
     //    println(elements.asList())
@@ -51,26 +52,21 @@ class Case<T, E>(var item: T, var item2: E) : Storage<T> {
     }
 
     override fun update(item: T) {
-        //НЕ ПОНЯТНО КАК РЕАЛИЗОВАТЬ
-        //КАК ВЫДЕЛИТЬ ИМЕННОВАННЫЙ АРГУМЕНТ В NOTES
-        //
         println("-update------------------")
-        this.item = item
-        for(item in numbersOne) {
-            println("for = $item")
-        }
-        numbersOne.forEach {Notes ->
-            println("element = ${Notes}")
-        }
-
+        numbersOne[numbersOne.indexOfFirst { it.id == item.id }] = item
+        //this.item = item
+        //for(item in numbersOne) {
+        //    println("for = $item")
+        //}
+        //numbersOne.forEach {Notes ->
+        //    println("element = ${Notes}")
+        //}
     }
 
     override fun delete(item: T) {
-        //НЕ ПОНЯТНО КАК РЕАЛИЗОВАТЬ
-        //КАК ВЫДЕЛИТЬ ИМЕННОВАННЫЙ АРГУМЕНТ В NOTES
-        //
         println("-delete-------------------")
-        numbersOne.remove(item)
+        numbersOne.removeIf { it.id == item.id }
+        //numbersOne.remove(item)
         //for(item in numbersOne)
         //numbersOne.removeAt(0)
         //println(item)
@@ -123,18 +119,25 @@ fun main() {
 
     println("")
     println("++ 2-ый вариант ++++++++++")
-    val notesCase = Case(Notes("Идентификатор заметки 00",1,1,"Заголовок 00","Заметка 00",1, 1, delStatus = false), 1)
+    //val notesCase = Case(Notes("Идентификатор заметки 00",1,1,"Заголовок 00","Заметка 00",1, 1, delStatus = false),0)
 
+    //ОШИБКА
+    //The integer literal does not conform to the expected type IdItem
+    val notesCase = Case(0, (Notes("Идентификатор заметки 00",1,1,"Заголовок 00","Заметка 00",1, 1, delStatus = false)))
+
+    //ОШИБКА
+    //Type mismatch: inferred type is Notes but Int was expected
+    //здесь, предполагаю изменить на первый параметр номер, второй параметр Notes в add
     notesCase.add(Notes("Идентификатор заметки 01",1,1,"Заголовок 01","Заметка 1", 2, 2, delStatus = false))
-    notesCase.add(Notes("Идентификатор заметки 11",1,1,"Заголовок 11","Заметка 1", 2, 2, delStatus = false))
-    notesCase.add(Notes("Идентификатор заметки 21",1,1,"Заголовок 21","Заметка 1", 2, 2, delStatus = false))
+    //notesCase.add(Notes("Идентификатор заметки 11",1,1,"Заголовок 11","Заметка 1", 2, 2, delStatus = false))
+    //notesCase.add(Notes("Идентификатор заметки 21",1,1,"Заголовок 21","Заметка 1", 2, 2, delStatus = false))
 
-    notesCase.read()
-    notesCase.delete(Notes("Идентификатор заметки 01",1,1,"Заголовок 01","Заметка 1", 2, 2, delStatus = false))
-    notesCase.read()
+    //notesCase.read()
+    //notesCase.delete(Notes("Идентификатор заметки 01",1,1,"Заголовок 01","Заметка 1", 2, 2, delStatus = false))
+    //notesCase.read()
 
-    notesCase.update(Notes("Идентификатор заметки 11",1,1,"Заголовок 22","Заметка 2", 2, 2, delStatus = false))
-    notesCase.read()
+    //notesCase.update(Notes("Идентификатор заметки 11",1,1,"Заголовок 22","Заметка 2", 2, 2, delStatus = false))
+    //notesCase.read()
 
 }
 
