@@ -17,7 +17,7 @@ interface Storage<T> {
 
 open class IdItem(val id: Int)
 
-class Case<T: IdItem, E>(var item: T, var item2: E) : Storage<T> {
+class Case<T: IdItem>(var item: T) : Storage<T> {
 
     private var numbersOne = mutableListOf<T>()
 
@@ -76,7 +76,7 @@ class Case<T: IdItem, E>(var item: T, var item2: E) : Storage<T> {
 
 
 data class Notes(
-    var noteId: String,
+    var noteId: Int,
     var userId: Int,
     var ownerId: Int,
     var title: String,
@@ -84,7 +84,7 @@ data class Notes(
     var privacy: Int,
     var commentPrivacy: Int,
     var delStatus: Boolean
-)
+) : IdItem(noteId)
 
 
 fun main() {
@@ -93,51 +93,44 @@ fun main() {
     val mutable: MutableList<Notes> = mutableListOf()
     //mutable = mutableListOf(Notes(noteId = "0", userId = 0, ownerId = 0, title = "Заголовок 0", text = "Заметка 0", privacy = 0, commentPrivacy = 0, delStatus = false))
     println("++ mutable добавить ++++++++++")
-    mutable.add(0, (Notes(noteId = "1", userId = 1, ownerId = 1, title = "Заголовок 1", text = "Заметка 1", privacy = 0, commentPrivacy = 0, delStatus = false)))
-    mutable.add(1, (Notes(noteId = "2", userId = 2, ownerId = 2, title = "Заголовок 2", text = "Заметка 2", privacy = 0, commentPrivacy = 0, delStatus = false)))
-    mutable.add(2, (Notes(noteId = "3", userId = 2, ownerId = 2, title = "Заголовок 3", text = "Заметка 3", privacy = 0, commentPrivacy = 0, delStatus = false)))
+    mutable.add(0, (Notes(noteId = 1, userId = 1, ownerId = 1, title = "Заголовок 1", text = "Заметка 1", privacy = 0, commentPrivacy = 0, delStatus = false)))
+    mutable.add(1, (Notes(noteId = 2, userId = 2, ownerId = 2, title = "Заголовок 2", text = "Заметка 2", privacy = 0, commentPrivacy = 0, delStatus = false)))
+    mutable.add(2, (Notes(noteId = 3, userId = 2, ownerId = 2, title = "Заголовок 3", text = "Заметка 3", privacy = 0, commentPrivacy = 0, delStatus = false)))
     println(mutable)
     println("++ mutable найти ++++++++++")
     println(mutable.getOrNull(1) ?: "No element")
     println(mutable.getOrNull(3) ?: "No element")
     println("++ mutable изменить ++++++++++")
-    mutable.set(0, (Notes(noteId = "1", userId = 1, ownerId = 1, title = "Заголовок 111", text = "Заметка 111", privacy = 0, commentPrivacy = 0, delStatus = false)))
+    mutable.set(0, (Notes(noteId = 1, userId = 1, ownerId = 1, title = "Заголовок 111", text = "Заметка 111", privacy = 0, commentPrivacy = 0, delStatus = false)))
     println(mutable.getOrNull(0) ?: "No element")
     println("++ mutable удалить ++++++++++")
     mutable.removeAt(0)
     println(mutable)
     println("++ mutable скрыть по фильтру ++++++++++")
-    mutable.set(0, (Notes(noteId = "1", userId = 1, ownerId = 1, title = "Заголовок 111", text = "Заметка 111", privacy = 0, commentPrivacy = 0, delStatus = true)))
+    mutable.set(0, (Notes(noteId = 1, userId = 1, ownerId = 1, title = "Заголовок 111", text = "Заметка 111", privacy = 0, commentPrivacy = 0, delStatus = true)))
     println(mutable.filter { !it.delStatus })
     println("++ mutable восстановить по фильтру ++++++++++")
-    mutable.set(0, (Notes(noteId = "1", userId = 1, ownerId = 1, title = "Заголовок 111", text = "Заметка 111", privacy = 0, commentPrivacy = 0, delStatus = false)))
+    mutable.set(0, (Notes(noteId = 1, userId = 1, ownerId = 1, title = "Заголовок 111", text = "Заметка 111", privacy = 0, commentPrivacy = 0, delStatus = false)))
     println(mutable.filter { !it.delStatus })
     println("++ mutable очистить ВСЕ ++++++++++")
-    //mutable.clear()
-    //println(mutable)
+    mutable.clear()
+    println(mutable)
 
 
     println("")
     println("++ 2-ый вариант ++++++++++")
-    //val notesCase = Case(Notes("Идентификатор заметки 00",1,1,"Заголовок 00","Заметка 00",1, 1, delStatus = false),0)
+    val notesCase = Case(Notes(0,0,0,"Заголовок 00","Заметка 0",1,1,false))
 
-    //ОШИБКА
-    //The integer literal does not conform to the expected type IdItem
-    val notesCase = Case(0, (Notes("Идентификатор заметки 00",1,1,"Заголовок 00","Заметка 00",1, 1, delStatus = false)))
+    notesCase.add(Notes(1,1,1,"Заголовок 01","Заметка 1", 2, 2, delStatus = false))
+    notesCase.add(Notes(2,1,1,"Заголовок 11","Заметка 2", 2, 2, delStatus = false))
+    notesCase.add(Notes(3,1,1,"Заголовок 31","Заметка 3", 2, 2, delStatus = true))
 
-    //ОШИБКА
-    //Type mismatch: inferred type is Notes but Int was expected
-    //здесь, предполагаю изменить на первый параметр номер, второй параметр Notes в add
-    notesCase.add(Notes("Идентификатор заметки 01",1,1,"Заголовок 01","Заметка 1", 2, 2, delStatus = false))
-    //notesCase.add(Notes("Идентификатор заметки 11",1,1,"Заголовок 11","Заметка 1", 2, 2, delStatus = false))
-    //notesCase.add(Notes("Идентификатор заметки 21",1,1,"Заголовок 21","Заметка 1", 2, 2, delStatus = false))
+    notesCase.read()
+    notesCase.delete(Notes(1,1,1,"Заголовок 01","Заметка 1", 2, 2, delStatus = false))
+    notesCase.read()
 
-    //notesCase.read()
-    //notesCase.delete(Notes("Идентификатор заметки 01",1,1,"Заголовок 01","Заметка 1", 2, 2, delStatus = false))
-    //notesCase.read()
-
-    //notesCase.update(Notes("Идентификатор заметки 11",1,1,"Заголовок 22","Заметка 2", 2, 2, delStatus = false))
-    //notesCase.read()
+    notesCase.update(Notes(2,1,1,"Заголовок 22","Заметка 2", 2, 2, delStatus = false))
+    notesCase.read()
 
 }
 
